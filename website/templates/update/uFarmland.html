@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="insertForm">
+    <form class="form-horizontal">
+      <h3 align="center">Update</h3>
+      <div class="form-group">
+        <label class="control-label col-sm-2" for="area">Area:</label>
+        <div class="col-sm-3">
+        <input type="number" class="form-control" id="area" name="area" placeholder="Enter area">
+    </div>
+    </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="address">Farmland with address:</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" id="address" name="address" placeholder="Enter lodging" required>
+            </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block js %}
+<script type="text/javascript" src="{{url_for('static', filename='uFarmland.js')}}"></script>
+{% endblock %}
