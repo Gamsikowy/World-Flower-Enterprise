@@ -222,3 +222,28 @@ def iHarvest():
             conn.close()
         
     return render_template('insert/iHarvest.html')
+
+@insert.route('/weeding', methods = ['GET', 'POST'])
+def iWeeding():
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        equipment_id = request.form.get('equipment_id')
+        person_pesel = request.form.get('person_pesel')
+        farmland_address = request.form.get('farmland_address')
+
+        cur = conn.cursor()
+        try:
+            insertQuery = "insert into weeding (recent_activity, equipment_id, person_pesel, farmland_address) values (%s, %s, %s, %s);"
+            record = (recent_activity, equipment_id, person_pesel, farmland_address)
+            cur.execute(insertQuery, record)
+            conn.commit()
+            print("Weeding inserted")
+            flash("Weeding inserted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            conn.close()
+        
+    return render_template('insert/iWeeding.html')
