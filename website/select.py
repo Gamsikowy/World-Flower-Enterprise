@@ -47,7 +47,20 @@ def sSowing():
 
 @select.route('/harvest')
 def sHarvest():
-    return render_template('select/sHarvest.html')
+
+    conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
+                        password = DB_PASS, host = DB_HOST)
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from harvest;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+        conn.close()
+    return render_template('select/sHarvest.html', rows = rows)
 
 @select.route('/weeding')
 def sWeeding():
