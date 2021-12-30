@@ -106,4 +106,14 @@ def sFarmland():
 
 @select.route('/warehouse')
 def sWarehouse():
-    return render_template('select/sWarehouse.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from warehouse;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sWarehouse.html',rows = rows)
