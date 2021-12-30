@@ -187,6 +187,32 @@ def iEquipment():
         
     return render_template('insert/iEquipment.html')
 
+@insert.route('/sowing', methods = ['GET', 'POST'])
+def iSowing():
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        seed_quantity = request.form.get('seed_quantity')
+        equipment_id = request.form.get('equipment_id')
+        farmland_address = request.form.get('farmland_address')
+        person_pesel = request.form.get('person_pesel')
+
+        cur = conn.cursor()
+        try:
+            insertQuery = "insert into sowing (recent_activity, seed_quantity, equipment_id, farmland_address, person_pesel) values (%s, %s, %s, %s, %s);"
+            record = (recent_activity, seed_quantity, equipment_id, farmland_address, person_pesel)
+            cur.execute(insertQuery, record)
+            conn.commit()
+            print("Equipment inserted")
+            flash("Equipment inserted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            conn.close()
+        
+    return render_template('insert/iSowing.html')
+
 @insert.route('/harvest', methods = ['GET', 'POST'])
 def iHarvest():
     if request.method == 'POST':
