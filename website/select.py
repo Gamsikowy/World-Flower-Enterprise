@@ -11,9 +11,20 @@ select = Blueprint('select', __name__)
 def sEmployee():
     return render_template('select/sEmployee.html')
 
-@select.route('/client')
+@select.route('/clients')
 def sClient():
-    return render_template('select/sClient.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from client;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+        conn.close()
+    return render_template('select/sClient.html', rows = rows)
 
 @select.route('/equipment')
 def sEquipment():
@@ -28,7 +39,6 @@ def sEquipment():
     finally:
         cur.close()
         conn.close()
-    print(rows)
     return render_template('select/sEquipment.html', rows = rows)
 
 @select.route('/sowing')
