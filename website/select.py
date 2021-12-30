@@ -17,7 +17,19 @@ def sClient():
 
 @select.route('/equipment')
 def sEquipment():
-    return render_template('select/sEquipment.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from equipment;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+        conn.close()
+    print(rows)
+    return render_template('select/sEquipment.html', rows = rows)
 
 @select.route('/sowing')
 def sSowing():
