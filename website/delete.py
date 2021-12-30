@@ -139,3 +139,25 @@ def dWarehouse():
             conn.close()
             
     return render_template('delete/dWarehouse.html')
+
+@delete.route('/transaction', methods = ['GET', 'DELETE'])
+def dTransaction():
+
+    if request.method == 'DELETE':
+        id = request.json['id']
+
+        cur = conn.cursor()
+        try:
+            insertQuery = "delete from transaction where id = %s;"
+            cur.execute(insertQuery, (id,))
+            conn.commit()
+
+            print("Transaction deleted")
+            flash("Transaction deleted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            
+    return render_template('delete/dTransaction.html')
