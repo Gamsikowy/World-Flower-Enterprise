@@ -51,7 +51,17 @@ def sEquipment():
 
 @select.route('/sowing')
 def sSowing():
-    return render_template('select/sSowing.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from sowing;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sSowing.html', rows = rows)
 
 @select.route('/harvest')
 def sHarvest():
