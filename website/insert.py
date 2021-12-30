@@ -247,3 +247,31 @@ def iWeeding():
             conn.close()
         
     return render_template('insert/iWeeding.html')
+
+@insert.route('/transaction', methods = ['GET', 'POST'])
+def iTransaction():
+    if request.method == 'POST':
+        flower_quantity = request.form.get('flower_quantity')
+        seed_quantity = request.form.get('seed_quantity')
+        payment = request.form.get('payment')
+        date_of_transaction = request.form.get('date_of_transaction')
+        client_pesel = request.form.get('client_pesel')
+        warehouse_address = request.form.get('warehouse_address')
+        person_pesel = request.form.get('person_pesel')
+
+        cur = conn.cursor()
+        try:
+            insertQuery = "insert into transaction (id, flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel) values (nextval('tr_seq'), %s, %s, %s, %s, %s, %s, %s);"
+            record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel)
+            cur.execute(insertQuery, record)
+            conn.commit()
+            print("Transaction inserted")
+            flash("Transaction inserted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            conn.close()
+        
+    return render_template('insert/iTransaction.html')
