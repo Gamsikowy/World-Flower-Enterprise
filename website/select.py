@@ -79,11 +79,17 @@ def sHarvest():
 
 @select.route('/weeding')
 def sWeeding():
-    return render_template('select/sWeeding.html')
 
-@select.route('/transactions')
-def sTransactions():
-    return render_template('select/sTransactions.html')
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from weeding;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sWeeding.html', rows = rows)
 
 @select.route('/lodging')
 def sLodging():
