@@ -186,3 +186,39 @@ def iEquipment():
             conn.close()
         
     return render_template('insert/iEquipment.html')
+
+@insert.route('/harvest', methods = ['GET', 'POST'])
+def iHarvest():
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        flower_quantity = request.form.get('flower_quantity')
+        equipment_id = request.form.get('equipment_id')
+        farmland_address = request.form.get('farmland_address')
+        person_pesel = request.form.get('person_pesel')
+
+        cur = conn.cursor()
+        try:
+            #cur.execute("SELECT id FROM equipment;")
+            #ids = cur.fetchall()
+            #print(type(ids[0][0]), ids[0][0])
+            #print(type(equipment_id))
+            #print(ids)
+            #bool_value = [True if int(equipment_id) in ids else False for ids in ids]
+            #print(bool_value)
+            #if True not in bool_value:
+            #    print('Entered equipment id does not exist')
+            #    raise psycopg2.DatabaseError
+            insertQuery = "insert into harvest (recent_activity, flower_quantity, equipment_id, farmland_address, person_pesel) values (%s, %s, %s, %s, %s);"
+            record = (recent_activity, flower_quantity, equipment_id, farmland_address, person_pesel)
+            cur.execute(insertQuery, record)
+            conn.commit()
+            print("Harvest inserted")
+            flash("Harvest inserted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            conn.close()
+        
+    return render_template('insert/iHarvest.html')

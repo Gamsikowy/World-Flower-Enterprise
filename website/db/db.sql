@@ -6,7 +6,7 @@ create table client (
 );
 
 create table equipment (
-    id    VARCHAR(11) NOT NULL,
+    id    INTEGER NOT NULL,
     name     VARCHAR(20) NOT NULL,
     model  VARCHAR(25),
     warranty_validity DATE

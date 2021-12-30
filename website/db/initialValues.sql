@@ -15,9 +15,9 @@ values ('76016142947', 'Arnold', 'Ingrid', 'Kapiteyn');
 insert into farmland (address, area)
 values ('Paal 110, Breezand', 100);
 insert into equipment (id, name)
-values (nextval(id) 'Combine harvester');
+values (nextval('eq_seq'), 'Combine harvester');
 insert into equipment (id, name, model)
-values (nextval(id) 'Sprinkler', '12');
+values (nextval('eq_seq'), 'Sprinkler', '12');
 insert into equipment (id, name, model)
 values (nextval('eq_seq'), 'Sprinkler', '14');
 insert into equipment (id, name, model, warranty_validity)
