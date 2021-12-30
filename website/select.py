@@ -85,7 +85,17 @@ def sTransactions():
 
 @select.route('/lodging')
 def sLodging():
-    return render_template('select/sLodging.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from lodging;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sLodging.html', rows = rows)
 
 @select.route('/farmland')
 def sFarmland():
