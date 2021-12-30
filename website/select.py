@@ -7,9 +7,22 @@ conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
 
 select = Blueprint('select', __name__)
 
-@select.route('/employees')
+@select.route('/employee')
 def sEmployee():
-    return render_template('select/sEmployee.html')
+
+    conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
+                        password = DB_PASS, host = DB_HOST)
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from person;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+        conn.close()
+    return render_template('select/sEmployee.html', rows = rows)
 
 @select.route('/clients')
 def sClient():
