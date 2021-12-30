@@ -10,8 +10,6 @@ select = Blueprint('select', __name__)
 @select.route('/employee')
 def sEmployee():
 
-    conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
-                        password = DB_PASS, host = DB_HOST)
     cur = conn.cursor()
     try:
         insertQuery = "select * from person;"
@@ -21,7 +19,6 @@ def sEmployee():
         print(f'Error {e}')
     finally:
         cur.close()
-        conn.close()
     return render_template('select/sEmployee.html', rows = rows)
 
 @select.route('/clients')
@@ -36,7 +33,6 @@ def sClient():
         print(f'Error {e}')
     finally:
         cur.close()
-        conn.close()
     return render_template('select/sClient.html', rows = rows)
 
 @select.route('/equipment')
@@ -51,7 +47,6 @@ def sEquipment():
         print(f'Error {e}')
     finally:
         cur.close()
-        conn.close()
     return render_template('select/sEquipment.html', rows = rows)
 
 @select.route('/sowing')
@@ -61,8 +56,6 @@ def sSowing():
 @select.route('/harvest')
 def sHarvest():
 
-    conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
-                        password = DB_PASS, host = DB_HOST)
     cur = conn.cursor()
     try:
         insertQuery = "select * from harvest;"
@@ -72,7 +65,6 @@ def sHarvest():
         print(f'Error {e}')
     finally:
         cur.close()
-        conn.close()
     return render_template('select/sHarvest.html', rows = rows)
 
 @select.route('/weeding')
@@ -109,7 +101,6 @@ def sFarmland():
         print(f'Error {e}')
     finally:
         cur.close()
-        conn.close()
     print(rows)
     return render_template('select/sFarmland.html', rows = rows)#headings = headings
 
