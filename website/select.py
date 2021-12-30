@@ -91,6 +91,20 @@ def sWeeding():
         cur.close()
     return render_template('select/sWeeding.html', rows = rows)
 
+@select.route('/transaction')
+def sTransactions():
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from transaction;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sTransaction.html', rows = rows)
+
 @select.route('/lodging')
 def sLodging():
 
