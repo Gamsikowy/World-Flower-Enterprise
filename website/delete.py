@@ -12,9 +12,9 @@ def dEmployee():
 
     if request.method == 'DELETE':
         pesel = request.json['pesel']
+        cur = conn.cursor()
         
         try:
-            cur = conn.cursor()
             insertQuery = "delete from person where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
             conn.commit()
@@ -33,9 +33,9 @@ def dEmployee():
 def dClient():
     if request.method == 'DELETE':
         pesel = request.json['pesel']
+        cur = conn.cursor()
         
         try:
-            cur = conn.cursor()
             insertQuery = "delete from client where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
             conn.commit()
@@ -56,9 +56,9 @@ def dEquipment():
 
     if request.method == 'DELETE':
         id = request.json['id']
-        
+        cur = conn.cursor()
+
         try:
-            cur = conn.cursor()
             insertQuery = "delete from equipment where id = %s;"
             cur.execute(insertQuery, (id,))
             conn.commit()
@@ -70,7 +70,7 @@ def dEquipment():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
+            
     return render_template('delete/dEquipment.html')
 
 @delete.route('/farmland', methods = ['GET', 'DELETE'])
@@ -78,9 +78,9 @@ def dFarmland():
 
     if request.method == 'DELETE':
         address = request.json['address']
-        
+        cur = conn.cursor()
+
         try:
-            cur = conn.cursor()
             insertQuery = "delete from farmland where address = %s;"
             cur.execute(insertQuery, (address,))
             conn.commit()
@@ -92,7 +92,7 @@ def dFarmland():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
+            
     return render_template('delete/dFarmland.html')
 
 @delete.route('/lodging', methods = ['GET', 'DELETE'])
@@ -100,9 +100,9 @@ def dLodging():
 
     if request.method == 'DELETE':
         address = request.json['address']
+        cur = conn.cursor()
         
         try:
-            cur = conn.cursor()
             insertQuery = "delete from lodging where address = %s;"
             cur.execute(insertQuery, (address,))
             conn.commit()
@@ -114,7 +114,7 @@ def dLodging():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
+
     return render_template('delete/dLodging.html')
 
 @delete.route('/warehouse', methods = ['GET', 'DELETE'])
@@ -122,9 +122,9 @@ def dWarehouse():
 
     if request.method == 'DELETE':
         address = request.json['address']
+        cur = conn.cursor()
         
         try:
-            cur = conn.cursor()
             insertQuery = "delete from warehouse where address = %s;"
             cur.execute(insertQuery, (address,))
             conn.commit()
@@ -136,6 +136,5 @@ def dWarehouse():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
             
     return render_template('delete/dWarehouse.html')
