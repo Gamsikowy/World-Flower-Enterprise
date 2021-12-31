@@ -140,6 +140,28 @@ def dWarehouse():
             
     return render_template('delete/dWarehouse.html')
 
+@delete.route('/sowing', methods = ['GET', 'DELETE'])
+def iSowing():
+
+    if request.method == 'DELETE':
+        recent_activity = request.json['recent_activity']
+        cur = conn.cursor()
+        
+        try:
+            insertQuery = "delete from sowing where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            conn.commit()
+
+            print("Sowing deleted")
+            flash("Sowing deleted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            
+    return render_template('delete/dSowing.html')
+
 @delete.route('/transaction', methods = ['GET', 'DELETE'])
 def dTransaction():
 
