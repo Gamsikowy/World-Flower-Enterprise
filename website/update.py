@@ -317,6 +317,52 @@ def uSowing():
 
     return render_template('update/uSowing.html')
 
+@update.route('/harvest', methods = ['GET', 'PUT'])
+def uHarvest():
+    if request.method == 'PUT':
+        recent_activity = request.json['recent_activity']
+        flower_quantity = request.json['flower_quantity']
+        equipment_id = request.json['equipment_id']
+        farmland_address = request.json['farmland_address']
+        person_pesel = request.json['person_pesel']
+        cur = conn.cursor()
+            
+        try:
+            record = (flower_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
+            
+            indices = [i for i, x in enumerate(record) if x == '']
+
+            if indices:
+                insertQuery = "select flower_quantity, equipment_id, farmland_address, person_pesel from harvest where recent_activity = %s;"
+                cur.execute(insertQuery, (recent_activity,))
+                result = cur.fetchone()
+                
+                record = list(record)
+                
+                for i in indices:
+                    record[i] = result[i]
+
+                record = tuple(record)
+
+                insertQuery = "update harvest set (flower_quantity, equipment_id, farmland_address, person_pesel) = (%s, %s, %s, %s) where recent_activity = %s;"
+                cur.execute(insertQuery, record)
+                conn.commit()
+            else:
+                insertQuery = "update harvest set (flower_quantity, equipment_id, farmland_address, person_pesel) = (%s, %s, %s, %s) where recent_activity = %s;"
+                record = (flower_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
+                cur.execute(insertQuery, record)
+                conn.commit()
+
+            print("Harvest updated")
+            flash("Harvest updated", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+
+    return render_template('update/uHarvest.html')
+
 @update.route('/transaction', methods = ['GET', 'PUT'])
 def uTransaction():
     if request.method == 'PUT':
