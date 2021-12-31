@@ -54,7 +54,6 @@ def uEmployee():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
     return render_template('update/uEmployee.html')
 
 @update.route('/warehouse', methods = ['GET', 'PUT'])
@@ -79,7 +78,6 @@ def uWarehouse():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uWarehouse.html')
 
@@ -102,7 +100,6 @@ def uLodging():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
     
     return render_template('update/uLodging.html')
 
@@ -125,7 +122,6 @@ def uFarmland():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uLodging.html')
 
@@ -173,7 +169,6 @@ def uClient():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uClient.html')
 
@@ -220,7 +215,6 @@ def uEquipment():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uEquipment.html')
 
