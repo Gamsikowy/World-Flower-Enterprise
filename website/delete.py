@@ -158,6 +158,28 @@ def iSowing():
             
     return render_template('delete/dSowing.html')
 
+@delete.route('/harvest', methods = ['GET', 'DELETE'])
+def iHarvest():
+
+    if request.method == 'DELETE':
+        recent_activity = request.json['recent_activity']
+        cur = conn.cursor()
+        
+        try:
+            insertQuery = "delete from harvest where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            conn.commit()
+
+            print("Harvest deleted")
+            flash("Harvest deleted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            
+    return render_template('delete/dHarvest.html')
+
 @delete.route('/transaction', methods = ['GET', 'DELETE'])
 def dTransaction():
 
