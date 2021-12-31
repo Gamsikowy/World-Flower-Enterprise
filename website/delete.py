@@ -14,7 +14,6 @@ def dEmployee():
         pesel = request.json['pesel']
         cur = conn.cursor()
         
-        cur = conn.cursor()
         try:
             insertQuery = "delete from person where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
@@ -35,7 +34,6 @@ def dClient():
         pesel = request.json['pesel']
         cur = conn.cursor()
         
-        cur = conn.cursor()
         try:
             insertQuery = "delete from client where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
@@ -101,7 +99,6 @@ def dLodging():
         address = request.json['address']
         cur = conn.cursor()
         
-        cur = conn.cursor()
         try:
             insertQuery = "delete from lodging where address = %s;"
             cur.execute(insertQuery, (address,))
@@ -124,7 +121,6 @@ def dWarehouse():
         address = request.json['address']
         cur = conn.cursor()
         
-        cur = conn.cursor()
         try:
             insertQuery = "delete from warehouse where address = %s;"
             cur.execute(insertQuery, (address,))
