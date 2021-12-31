@@ -51,7 +51,17 @@ def sEquipment():
 
 @select.route('/sowing')
 def sSowing():
-    return render_template('select/sSowing.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from sowing;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sSowing.html', rows = rows)
 
 @select.route('/harvest')
 def sHarvest():
@@ -69,11 +79,31 @@ def sHarvest():
 
 @select.route('/weeding')
 def sWeeding():
-    return render_template('select/sWeeding.html')
 
-@select.route('/transactions')
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from weeding;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sWeeding.html', rows = rows)
+
+@select.route('/transaction')
 def sTransactions():
-    return render_template('select/sTransactions.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from transaction;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sTransaction.html', rows = rows)
 
 @select.route('/lodging')
 def sLodging():
@@ -106,4 +136,14 @@ def sFarmland():
 
 @select.route('/warehouse')
 def sWarehouse():
-    return render_template('select/sWarehouse.html')
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select * from warehouse;"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+    return render_template('select/sWarehouse.html',rows = rows)

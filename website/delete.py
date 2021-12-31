@@ -14,6 +14,7 @@ def dEmployee():
         pesel = request.json['pesel']
         cur = conn.cursor()
         
+        cur = conn.cursor()
         try:
             insertQuery = "delete from person where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
@@ -26,7 +27,6 @@ def dEmployee():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
     return render_template('delete/dEmployee.html')
 
 @delete.route('/client', methods = ['GET', 'DELETE'])
@@ -35,6 +35,7 @@ def dClient():
         pesel = request.json['pesel']
         cur = conn.cursor()
         
+        cur = conn.cursor()
         try:
             insertQuery = "delete from client where pesel = %s;"
             cur.execute(insertQuery, (pesel,))
@@ -47,7 +48,6 @@ def dClient():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('delete/dClient.html')
 
@@ -70,7 +70,7 @@ def dEquipment():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            
+
     return render_template('delete/dEquipment.html')
 
 @delete.route('/farmland', methods = ['GET', 'DELETE'])
@@ -91,7 +91,7 @@ def dFarmland():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            
+
     return render_template('delete/dFarmland.html')
 
 @delete.route('/lodging', methods = ['GET', 'DELETE'])
@@ -101,6 +101,7 @@ def dLodging():
         address = request.json['address']
         cur = conn.cursor()
         
+        cur = conn.cursor()
         try:
             insertQuery = "delete from lodging where address = %s;"
             cur.execute(insertQuery, (address,))
@@ -123,6 +124,7 @@ def dWarehouse():
         address = request.json['address']
         cur = conn.cursor()
         
+        cur = conn.cursor()
         try:
             insertQuery = "delete from warehouse where address = %s;"
             cur.execute(insertQuery, (address,))
@@ -137,3 +139,25 @@ def dWarehouse():
             cur.close()
             
     return render_template('delete/dWarehouse.html')
+
+@delete.route('/transaction', methods = ['GET', 'DELETE'])
+def dTransaction():
+
+    if request.method == 'DELETE':
+        id = request.json['id']
+
+        cur = conn.cursor()
+        try:
+            insertQuery = "delete from transaction where id = %s;"
+            cur.execute(insertQuery, (id,))
+            conn.commit()
+
+            print("Transaction deleted")
+            flash("Transaction deleted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            
+    return render_template('delete/dTransaction.html')
