@@ -223,3 +223,54 @@ def uEquipment():
             conn.close()
 
     return render_template('update/uEquipment.html')
+
+@update.route('/transaction', methods = ['GET', 'PUT'])
+def uTransaction():
+    if request.method == 'PUT':
+        id = request.json['id']
+        flower_quantity = request.json['flower_quantity']
+        seed_quantity = request.json['seed_quantity']
+        payment = request.json['payment']
+        date_of_transaction = request.json['date_of_transaction']
+        client_pesel = request.json['client_pesel']
+        warehouse_address = request.json['warehouse_address']
+        person_pesel = request.json['person_pesel']
+            
+        cur = conn.cursor()
+        try:
+            record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
+            
+            indices = [i for i, x in enumerate(record) if x == '']
+            print(indices)
+            
+            if indices:
+                insertQuery = "select flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel from transaction where id = %s;"
+                cur.execute(insertQuery, (id,))
+                result = cur.fetchone()
+                
+                record = list(record)
+                
+                for i in indices:
+                    print(result)
+                    record[i] = result[i]
+
+                record = tuple(record)
+
+                insertQuery = "update transaction set (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel) = (%s, %s, %s, %s, %s, %s, %s) where id = %s;"
+                cur.execute(insertQuery, record)
+                conn.commit()
+            else:
+                insertQuery = "update transaction set (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel) = (%s, %s, %s, %s, %s, %s, %s) where id = %s;"
+                record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
+                cur.execute(insertQuery, record)
+                conn.commit()
+            
+            print("Transaction updated")
+            flash("Transaction updated", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+
+    return render_template('update/uTransaction.html')
