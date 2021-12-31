@@ -180,6 +180,28 @@ def iHarvest():
             
     return render_template('delete/dHarvest.html')
 
+@delete.route('/weeding', methods = ['GET', 'DELETE'])
+def iWeeding():
+
+    if request.method == 'DELETE':
+        recent_activity = request.json['recent_activity']
+        cur = conn.cursor()
+        
+        try:
+            insertQuery = "delete from weeding where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            conn.commit()
+
+            print("Weeding deleted")
+            flash("Weeding deleted", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+            
+    return render_template('delete/dWeeding.html')
+
 @delete.route('/transaction', methods = ['GET', 'DELETE'])
 def dTransaction():
 
