@@ -91,7 +91,7 @@ def sLodging():
 
 @select.route('/farmland')
 def sFarmland():
-
+    
     cur = conn.cursor()
     try:
         insertQuery = "select * from farmland;"
@@ -101,8 +101,8 @@ def sFarmland():
         print(f'Error {e}')
     finally:
         cur.close()
-    print(rows)
-    return render_template('select/sFarmland.html', rows = rows)#headings = headings
+    
+    return render_template('select/sFarmland.html', rows = rows)
 
 @select.route('/warehouse')
 def sWarehouse():

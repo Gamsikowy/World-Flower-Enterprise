@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect
+from flask import Blueprint, render_template, request, flash
 from .config import DB_HOST, DB_NAME, DB_USER, DB_PASS
 import psycopg2
 
@@ -19,8 +19,8 @@ def uEmployee():
         salary = request.json['salary']
         role = request.json['role']
         lodgingAddress = request.json['lodgingAddress']
-        
         cur = conn.cursor()
+
         try:
             record = (name, surname, phone, birth, salary, role, lodgingAddress, pesel)
            
@@ -54,10 +54,10 @@ def uEmployee():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
+            
     return render_template('update/uEmployee.html')
 
-@update.route('/warehouse', methods = ['GET', 'PUT'])
+@update.route('/warehouse', methods = ['GET', 'PUT', 'POST'])
 def uWarehouse():
     if request.method == 'PUT':
         address = request.json['address']
@@ -79,17 +79,68 @@ def uWarehouse():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
+
+    elif request.method == 'POST':
+        percentage = request.json['percentage']
+        action = request.json['action']
+        cur = conn.cursor()
+
+        if action == 'lower':
+            try:
+                insertQuery = "call discount(%s);"
+                record = (percentage,)
+                cur.execute(insertQuery, record)
+                conn.commit()
+                print("Flower price updated")
+                flash("Flower price updated", category = 'success')
+            except psycopg2.DatabaseError as e:
+                print(f'Error {e}')
+                flash("The price reduction was not successful", category = 'error')
+            finally:
+                cur.close()
+        else:
+            try:
+                insertQuery = "call priceIncrease(%s);"
+                record = (percentage,)
+                cur.execute(insertQuery, record)
+                conn.commit()
+                print("Flower price updated")
+                flash("Flower price updated", category = 'success')
+            except psycopg2.DatabaseError as e:
+                print(f'Error {e}')
+                flash("The price increase was not successful", category = 'error')
+            finally:
+                cur.close()
 
     return render_template('update/uWarehouse.html')
+
+# @update.route('/warehouse/lower', methods = ['PUT', 'POST'])
+# def uWarehouseLower():
+    
+#     percentage = request.json['percentage']
+#     cur = conn.cursor()
+
+#     try:
+#         insertQuery = "call discount(%s);"
+#         record = (percentage,)
+#         cur.execute(insertQuery, record)
+#         conn.commit()
+#         print("Flower price updated")
+#     except psycopg2.DatabaseError as e:
+#         print(f'Error {e}')
+#     finally:
+#         cur.close()
+#         conn.close()
+    
+#     return redirect(url_for('select.sFarmland'))
 
 @update.route('/lodging', methods = ['GET', 'PUT'])
 def uLodging():
     if request.method == 'PUT':
         address = request.json['address']
         apartments = request.json['apartments']
-            
         cur = conn.cursor()
+            
         try:
             insertQuery = "update lodging set apartments = %s where address = %s;"
             record = (apartments, address)
@@ -102,7 +153,6 @@ def uLodging():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
     
     return render_template('update/uLodging.html')
 
@@ -111,8 +161,8 @@ def uFarmland():
     if request.method == 'PUT':
         address = request.json['address']
         area = request.json['area']
-            
         cur = conn.cursor()
+            
         try:
             insertQuery = "update farmland set area = (%s) where address = %s;"
             record = (area, address)
@@ -125,7 +175,6 @@ def uFarmland():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uLodging.html')
 
@@ -137,9 +186,9 @@ def uClient():
         name = request.json['name']
         surname = request.json['surname']
         company = request.json['company']
+        cur = conn.cursor()
         
         try:
-            cur = conn.cursor()
             record = (name, surname, company, pesel)
             
             indices = [i for i, x in enumerate(record) if x == '']
@@ -173,7 +222,6 @@ def uClient():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uClient.html')
 
@@ -185,11 +233,11 @@ def uEquipment():
         name = request.json['name']
         model = request.json['model']
         warrantyValidity = request.json['warranty_validity']
-        
         cur = conn.cursor()
+
         try:
             record = (name, model, warrantyValidity, id)
-            
+
             indices = [i for i, x in enumerate(record) if x == '']
             
             if indices:
@@ -220,6 +268,5 @@ def uEquipment():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('update/uEquipment.html')
