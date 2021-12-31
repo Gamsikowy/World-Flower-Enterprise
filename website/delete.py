@@ -75,7 +75,6 @@ def dEquipment():
 
 @delete.route('/farmland', methods = ['GET', 'DELETE'])
 def dFarmland():
-
     if request.method == 'DELETE':
         address = request.json['address']
         cur = conn.cursor()
