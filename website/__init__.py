@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 
 def create_app():
     app = Flask(__name__)
@@ -13,5 +13,9 @@ def create_app():
     app.register_blueprint(insert, url_prefix = '/insert')
     app.register_blueprint(update, url_prefix = '/update')
     app.register_blueprint(delete, url_prefix = '/delete')
+
+    @app.route('/')
+    def basicRoute():
+        return redirect(url_for('select.sFarmland'))
 
     return app

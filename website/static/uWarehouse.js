@@ -1,4 +1,8 @@
-const submitBtn = document.querySelector('.btn-primary');
+const submitBtn = document.querySelector('.btn-update');
+const lowerBtn = document.querySelector('.btn-lower');
+const increaseBtn = document.querySelector('.btn-increase');
+const lowerPercentage = document.querySelector('.form-control-l');
+const increasePercentage = document.querySelector('.form-control-i');
 const values = document.querySelectorAll('.form-control');
 
 submitBtn.addEventListener('click', (e) => {
@@ -15,4 +19,30 @@ submitBtn.addEventListener('click', (e) => {
       headers: { 'Content-type': 'application/json' },
       body: JSON.stringify({ flowerQuantity, seedQuantity, flowerPrice, seedPrice, address })
     });
+});
+
+lowerBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    let percentage = lowerPercentage.value;
+    let action = 'lower'
+
+    return fetch('/update/warehouse', {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({ percentage, action })
+    });
+});
+
+increaseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    let percentage = increasePercentage.value;
+    let action = 'increase'
+
+    return fetch('/update/warehouse', {
+      method: 'POST',
+      headers: { 'Content-type': 'application/json' },
+      body: JSON.stringify({ percentage, action })
+  });
 });

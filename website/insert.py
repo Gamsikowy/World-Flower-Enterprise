@@ -10,6 +10,17 @@ conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
 
 @insert.route('/employee', methods = ['GET', 'POST'])
 def iEmployee():
+    cur = conn.cursor()
+    try:
+        insertQuery = "select freeApartments();"
+        cur.execute(insertQuery)
+        row = cur.fetchone()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+        flash("The operation could not be performed successfully", category = 'error')
+    finally:
+        cur.close()
+
     if request.method == 'POST':
         name = request.form.get('name')
         surname = request.form.get('surname')
@@ -37,8 +48,9 @@ def iEmployee():
             print("An employee cannot have such a low salary")
             flash("An employee cannot have such a low salary", category = 'error')
     
+        cur = conn.cursor()
+
         try:
-            cur = conn.cursor()
             insertQuery = "insert into equipment (pesel, name, surname, phone_number, birth_date, salary, role, lodging_address) values (%s, %s, %s, %s, %s, %s, %s, %s);"
             record = (pesel, name, surname, phone, birthDate, salary, role, lodgingAddress)
             cur.execute(insertQuery, record)
@@ -50,18 +62,17 @@ def iEmployee():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
         
-    return render_template('insert/iEmployee.html')
+    return render_template('insert/iEmployee.html', apartmentsNumber = row[0])
 
 @insert.route('/lodging', methods = ['GET', 'POST'])
 def iLodging():
     if request.method == 'POST':
         address = request.form.get('address')
         apartments = request.form.get('apartments')
+        cur = conn.cursor()
             
         try:
-            cur = conn.cursor()
             insertQuery = "insert into lodging (address, apartments) values (%s, %s);"
             record = (address, apartments)
             cur.execute(insertQuery, record)
@@ -73,7 +84,6 @@ def iLodging():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('insert/iLodging.html')
 
@@ -84,9 +94,9 @@ def iWarehouse():
         flower_quantity = request.form.get('flower_quantity')
         seed_quantity = request.form.get('seed_quantity')
         flower_price = request.form.get('flower_price')
-        seed_price = request.form.get('seed_price')
-            
+        seed_price = request.form.get('seed_price')    
         cur = conn.cursor()
+
         try:
             insertQuery = "insert into warehouse (address, flower_quantity, seed_quantity, flower_price, seed_price) values (%s, %s, %s, %s, %s);"
             record = (address, flower_quantity, seed_quantity, flower_price, seed_price)
@@ -99,7 +109,6 @@ def iWarehouse():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('insert/iWarehouse.html')
 
@@ -122,7 +131,6 @@ def iFarmland():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('insert/iFarmland.html')
 
@@ -154,14 +162,12 @@ def iClient():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
 
     return render_template('insert/iClient.html')
 
 @insert.route('/equipment', methods = ['GET', 'POST'])
 def iEquipment():
     if request.method == 'POST':
-        id = request.form.get('id')
         name = request.form.get('name')
         model = request.form.get('model')
         warrantyValidity = request.form.get('warranty_validity')
@@ -172,8 +178,8 @@ def iEquipment():
 
         cur = conn.cursor()
         try:
-            insertQuery = "insert into equipment (id, name, model, warranty_validity) values (%s, %s, %s, %s);"
-            record = (id, name, model, warrantyValidity)
+            insertQuery = "insert into equipment (id, name, model, warranty_validity) values (nextval('eq_seq'), %s, %s, %s);"
+            record = (name, model, warrantyValidity)
             cur.execute(insertQuery, record)
             conn.commit()
             print("Equipment inserted")
@@ -183,7 +189,6 @@ def iEquipment():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
         
     return render_template('insert/iEquipment.html')
 
@@ -245,7 +250,6 @@ def iHarvest():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
         
     return render_template('insert/iHarvest.html')
 
@@ -270,7 +274,6 @@ def iWeeding():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
         
     return render_template('insert/iWeeding.html')
 
@@ -298,6 +301,5 @@ def iTransaction():
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
-            conn.close()
         
     return render_template('insert/iTransaction.html')
