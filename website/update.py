@@ -363,6 +363,51 @@ def uHarvest():
 
     return render_template('update/uHarvest.html')
 
+@update.route('/weeding', methods = ['GET', 'PUT'])
+def uWeeding():
+    if request.method == 'PUT':
+        recent_activity = request.json['recent_activity']
+        equipment_id = request.json['equipment_id']
+        person_pesel = request.json['person_pesel']
+        farmland_address = request.json['farmland_address']
+        cur = conn.cursor()
+            
+        try:
+            record = (equipment_id, person_pesel, farmland_address, recent_activity)
+            
+            indices = [i for i, x in enumerate(record) if x == '']
+
+            if indices:
+                insertQuery = "select equipment_id, person_pesel, farmland_address from weeding where recent_activity = %s;"
+                cur.execute(insertQuery, (recent_activity,))
+                result = cur.fetchone()
+                
+                record = list(record)
+                
+                for i in indices:
+                    record[i] = result[i]
+
+                record = tuple(record)
+
+                insertQuery = "update weeding set (equipment_id, person_pesel, farmland_address) = (%s, %s, %s) where recent_activity = %s;"
+                cur.execute(insertQuery, record)
+                conn.commit()
+            else:
+                insertQuery = "update weeding set (equipment_id, person_pesel, farmland_address) = (%s, %s, %s) where recent_activity = %s;"
+                record = (equipment_id, person_pesel, farmland_address, recent_activity)
+                cur.execute(insertQuery, record)
+                conn.commit()
+
+            print("Weeding updated")
+            flash("Weeding updated", category = 'success')
+        except psycopg2.DatabaseError as e:
+            print(f'Error {e}')
+            flash("The operation could not be performed successfully", category = 'error')
+        finally:
+            cur.close()
+
+    return render_template('update/uWeeding.html')
+
 @update.route('/transaction', methods = ['GET', 'PUT'])
 def uTransaction():
     if request.method == 'PUT':
