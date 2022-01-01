@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="insertForm">
-    <form class="form-horizontal">
+    <form class="form-horizontal" method="POST">
         <h3 style="text-align: center">Update</h3>
         <div class="form-group">
             <label class="control-label col-sm-2" for="recent_activity">Weeding date:</label>
@@ -34,7 +34,4 @@
         </div>
     </form>
 </div>
-{% endblock %}
-{% block js %}
-<script type="text/javascript" src="{{url_for('static', filename='uWeeding.js')}}"></script>
 {% endblock %}

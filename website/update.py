@@ -249,8 +249,9 @@ def uClient():
                 record = (name, surname, company, pesel)
                 cur.execute(insertQuery, record)
                 conn.commit()
-                print("Client modified")
-                flash("Client modified", category = 'success')
+                
+            print("Client modified")
+            flash("Client modified", category = 'success')
         except psycopg2.DatabaseError as e:
                 print(f'Error {e}')
                 flash("The operation could not be performed successfully", category = 'error')
@@ -297,8 +298,9 @@ def uEquipment():
                 record = (name, model, warrantyValidity, id)
                 cur.execute(insertQuery, record)
                 conn.commit()
-                print("Equipment modified")
-                flash("Equipment modified", category = 'success')
+
+            print("Equipment modified")
+            flash("Equipment modified", category = 'success')
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')
@@ -310,6 +312,7 @@ def uEquipment():
 @update.route('/sowing', methods = ['GET', 'POST'])
 def uSowing():
     if request.method == 'POST':
+        print('elo')
         recent_activity = request.form.get('recent_activity')
         seed_quantity = request.form.get('seed_quantity')
         equipment_id = request.form.get('equipment_id')
@@ -327,6 +330,10 @@ def uSowing():
                 cur.execute(insertQuery, (recent_activity,))
                 result = cur.fetchone()
                 
+                if result == None:
+                    flash("Enter the correct date", category = 'error')
+                    return render_template('update/uSowing.html')
+
                 record = list(record)
                 
                 for i in indices:
@@ -373,6 +380,10 @@ def uHarvest():
                 cur.execute(insertQuery, (recent_activity,))
                 result = cur.fetchone()
                 
+                if result == None:
+                    flash("Enter the correct date", category = 'error')
+                    return render_template('update/uHarvest.html')
+
                 record = list(record)
                 
                 for i in indices:
@@ -418,6 +429,10 @@ def uWeeding():
                 cur.execute(insertQuery, (recent_activity,))
                 result = cur.fetchone()
                 
+                if result == None:
+                    flash("Enter the correct date", category = 'error')
+                    return render_template('update/uWeeding.html')
+
                 record = list(record)
                 
                 for i in indices:
@@ -462,13 +477,16 @@ def uTransaction():
             record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
             
             indices = [i for i, x in enumerate(record) if x == '']
-            print(indices)
             
             if indices:
                 insertQuery = "select flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel from transaction where id = %s;"
                 cur.execute(insertQuery, (id,))
                 result = cur.fetchone()
                 
+                if result == None:
+                    flash("Enter the correct id", category = 'error')
+                    return render_template('update/uTransaction.html')
+
                 record = list(record)
                 
                 for i in indices:

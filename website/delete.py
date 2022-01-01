@@ -200,7 +200,7 @@ def iSowing():
             result = cur.fetchone()
 
             if result == None:
-                flash("Enter the correct address", category = 'error')
+                flash("Enter the correct date", category = 'error')
                 return render_template('delete/dSowing.html')
 
             insertQuery = "delete from sowing where recent_activity = %s;"
@@ -230,7 +230,7 @@ def iHarvest():
             result = cur.fetchone()
 
             if result == None:
-                flash("Enter the correct address", category = 'error')
+                flash("Enter the correct date", category = 'error')
                 return render_template('delete/dHarvest.html')
 
             insertQuery = "delete from harvest where recent_activity = %s;"
@@ -261,7 +261,7 @@ def iWeeding():
             result = cur.fetchone()
 
             if result == None:
-                flash("Enter the correct address", category = 'error')
+                flash("Enter the correct date", category = 'error')
                 return render_template('delete/dWeeding.html')
 
             insertQuery = "delete from weeding where recent_activity = %s;"
@@ -291,7 +291,7 @@ def dTransaction():
             result = cur.fetchone()
 
             if result == None:
-                flash("Enter the correct address", category = 'error')
+                flash("Enter the correct id", category = 'error')
                 return render_template('delete/dTransaction.html')
 
             insertQuery = "delete from transaction where id = %s;"
