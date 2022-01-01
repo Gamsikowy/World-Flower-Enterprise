@@ -6,25 +6,25 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="id">Transaction with ID:</label>
         <div class="col-sm-3">
-          <input type="number" class="form-control" id="id" name="id" placeholder="Enter ID" required>
+          <input type="number" class="form-control" id="id" name="id" min="0" placeholder="Enter ID" required>
         </div>
     </div>
       <div class="form-group">
         <label class="control-label col-sm-2" for="flower_quantity">Flower quantity:</label>
         <div class="col-sm-3">
-        <input type="number" class="form-control" id="flower_quantity" name="flower_quantity" placeholder="Enter flower quantity">
+        <input type="number" class="form-control" id="flower_quantity" name="flower_quantity" min="0" placeholder="Enter flower quantity">
         </div>
     </div>
     <div class="form-group">
         <label class="control-label col-sm-2" for="seed_quantity">Seed quantity:</label>
         <div class="col-sm-3">
-          <input type="number" step="0.01" class="form-control" id="seed_quantity" name="seed_quantity" placeholder="Enter seed quantity">
+          <input type="number" step="0.01" class="form-control" id="seed_quantity" name="seed_quantity" min="0" placeholder="Enter seed quantity">
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2" for="payment">Payment:</label>
         <div class="col-sm-3">
-          <input type="number" step="0.01" class="form-control" id="payment" name="payment" placeholder="Enter payment">
+          <input type="number" step="0.01" class="form-control" id="payment" name="payment" min="0" placeholder="Enter payment">
         </div>
       </div>
       <div class="form-group">
@@ -48,7 +48,7 @@
     <div class="form-group">
         <label class="control-label col-sm-2" for="person_pesel">Person pesel:</label>
         <div class="col-sm-3">
-            <input type="text" maxlength="11" class="form-control" id="person_pesel" name="person_pesel" placeholder="Enter pesel">
+            <input type="text" minlength="11" maxlength="11" class="form-control" id="person_pesel" name="person_pesel" placeholder="Enter pesel">
         </div>
     </div>
         <div class="form-group">

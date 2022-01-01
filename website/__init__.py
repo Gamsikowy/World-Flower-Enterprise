@@ -16,6 +16,6 @@ def create_app():
 
     @app.route('/')
     def basicRoute():
-        return redirect(url_for('select.sFarmland'))
+        return redirect(url_for('select.sWarehouse'))
 
     return app

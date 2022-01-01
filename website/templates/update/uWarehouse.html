@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="insertForm">
-    <form class="form-horizontal">
+    <form class="form-horizontal" method="POST">
       <h3 align="center">Update</h3>
       <div class="form-group">
         <label class="control-label col-sm-2" for="flower_quantity">Flower quantity:</label>
@@ -12,19 +12,19 @@
     <div class="form-group">
         <label class="control-label col-sm-2" for="seed_quantity">Seed quantity:</label>
         <div class="col-sm-3">
-          <input type="number" class="form-control" id="seed_quantity" name="seed_quantity" placeholder="Enter seed quantity">
+          <input type="number" class="form-control" id="seed_quantity" name="seed_quantity" min="0" placeholder="Enter seed quantity">
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2" for="flower_price">Flower price:</label>
         <div class="col-sm-3">
-          <input type="number" class="form-control" id="flower_price" name="flower_price" placeholder="Enter flower price">
+          <input type="number" class="form-control" id="flower_price" name="flower_price" min="0" placeholder="Enter flower price">
         </div>
       </div>
       <div class="form-group">
         <label class="control-label col-sm-2" for="seed_price">Seed price:</label>
         <div class="col-sm-3">
-          <input type="number" class="form-control" id="seed_price" name="seed_price" placeholder="Enter seed price">
+          <input type="number" class="form-control" id="seed_price" name="seed_price" min="0" placeholder="Enter seed price">
         </div>
       </div>
         <div class="form-group">
@@ -38,6 +38,8 @@
             <button type="submit" class="btn btn-primary btn-update">Update</button>
           </div>
         </div>
+    </form>
+    <form class="form-horizontal" method="POST" action="/update/warehouse/lower">
       <div class="form-group">
         <br><h5>Make a discount:</h5><br>
         <label class="control-label col-xlg-2" for="discount_percentage">Enter the percentage by which you want to lower the flower price:</label>
@@ -50,6 +52,8 @@
           <button type="submit" class="btn btn-primary btn-lower">Lower</button>
         </div>
       </div>
+    </form>
+    <form class="form-horizontal" method="POST" action="/update/warehouse/increase">
       <div class="form-group">
         <br><h5>Make a price increase:</h5><br>
         <label class="control-label col-xlg-2" for="price_increase_percentage">Enter the percentage by which you want to increase the price of flowers:</label>
@@ -64,7 +68,4 @@
       </div>
     </form>
 </div>
-{% endblock %}
-{% block js %}
-<script type="text/javascript" src="{{url_for('static', filename='uWarehouse.js')}}"></script>
 {% endblock %}
