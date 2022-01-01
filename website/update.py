@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from .config import DB_HOST, DB_NAME, DB_USER, DB_PASS
 import psycopg2
 
@@ -7,18 +7,18 @@ conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
 
 update = Blueprint('update', __name__)
 
-@update.route('/employee', methods = ['GET', 'PUT'])
+@update.route('/employee', methods = ['GET', 'POST'])
 def uEmployee():
-    if request.method == 'PUT':
+    if request.method == 'POST':
+        pesel = request.form.get('pesel')
+        name = request.form.get('name')
+        surname = request.form.get('surname')
+        phone = request.form.get('phone')
+        birth = request.form.get('birthDate')
+        salary = request.form.get('salary')
+        role = request.form.get('role')
+        lodgingAddress = request.form.get('lodgingAddress')
 
-        pesel = request.json['pesel']
-        name = request.json['name']
-        surname = request.json['surname']
-        phone = request.json['phone']
-        birth = request.json['birth']
-        salary = request.json['salary']
-        role = request.json['role']
-        lodgingAddress = request.json['lodgingAddress']
         cur = conn.cursor()
 
         try:
@@ -27,7 +27,7 @@ def uEmployee():
             indices = [i for i, x in enumerate(record) if x == '' or x == None]
            
             if indices:
-                insertQuery = "select name, surname, phone_number, birth_date, salary, role, lodging_address from person where pesel = %s;"
+                insertQuery = 'select name, surname, phone_number, birth_date, salary, role, lodging_address from person where pesel = %s;'
                 cur.execute(insertQuery, (pesel,))
                 result = cur.fetchone()
                 
@@ -48,7 +48,7 @@ def uEmployee():
                 conn.commit()
 
             print("Employee modified")
-            flash("Employee modified", category = 'success')
+            flash('Employee modified', category = 'success')
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')
@@ -57,91 +57,116 @@ def uEmployee():
 
     return render_template('update/uEmployee.html')
 
-@update.route('/warehouse', methods = ['GET', 'PUT', 'POST'])
+@update.route('/warehouse', methods = ['GET', 'POST'])
 def uWarehouse():
-    if request.method == 'PUT':
-        address = request.json['address']
-        flower_quantity = request.json['flowerQuantity']
-        seed_quantity = request.json['seedQuantity']
-        flower_price = request.json['flowerPrice']
-        seed_price = request.json['seedPrice']
+    if request.method == 'POST':
+        address = request.form.get('address')
+        flower_quantity = request.form.get('flower_quantity')
+        seed_quantity = request.form.get('seed_quantity')
+        flower_price = request.form.get('flower_price')
+        seed_price = request.form.get('seed_price')
             
         cur = conn.cursor()
+
+        record = (flower_quantity, seed_quantity, flower_price, seed_price, address)
+        indices = [i for i, x in enumerate(record) if x == '']
+
         try:
-            insertQuery = "update warehouse set (flower_quantity, seed_quantity, flower_price, seed_price) = (%s, %s, %s, %s) where address = %s;"
-            record = (flower_quantity, seed_quantity, flower_price, seed_price, address)
-            cur.execute(insertQuery, record)
-            conn.commit()
-            print("Warehouse updated")
-            flash("Warehouse updated", category = 'success')
+            if indices:
+                insertQuery = "select flower_quantity, seed_quantity, flower_price, seed_price from warehouse where address = %s;"
+                cur.execute(insertQuery, (address,))
+                result = cur.fetchone()
+
+                if result == None:
+                        flash("Enter the correct address", category = 'error')
+                        return render_template('update/uWarehouse.html')
+
+                record = list(record)
+            
+                for i in indices:
+                    record[i] = result[i]
+
+                record = tuple(record)
+
+                insertQuery = "update warehouse set (flower_quantity, seed_quantity, flower_price, seed_price) = (%s, %s, %s, %s) where address = %s;"
+                cur.execute(insertQuery, record)
+                conn.commit()
+                print("Warehouse updated")
+                flash("Warehouse updated", category = 'success')
+            else:
+                insertQuery = "update warehouse set (flower_quantity, seed_quantity, flower_price, seed_price) = (%s, %s, %s, %s) where address = %s;"
+                record = (flower_quantity, seed_quantity, flower_price, seed_price, address)
+                cur.execute(insertQuery, record)
+                conn.commit()
+                print("Warehouse updated")
+                flash("Warehouse updated", category = 'success')
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
 
-    elif request.method == 'POST':
-        percentage = request.json['percentage']
-        action = request.json['action']
-        cur = conn.cursor()
-
-        if action == 'lower':
-            try:
-                insertQuery = "call discount(%s);"
-                record = (percentage,)
-                cur.execute(insertQuery, record)
-                conn.commit()
-                print("Flower price updated")
-                flash("Flower price updated", category = 'success')
-            except psycopg2.DatabaseError as e:
-                print(f'Error {e}')
-                flash("The price reduction was not successful", category = 'error')
-            finally:
-                cur.close()
-        else:
-            try:
-                insertQuery = "call priceIncrease(%s);"
-                record = (percentage,)
-                cur.execute(insertQuery, record)
-                conn.commit()
-                print("Flower price updated")
-                flash("Flower price updated", category = 'success')
-            except psycopg2.DatabaseError as e:
-                print(f'Error {e}')
-                flash("The price increase was not successful", category = 'error')
-            finally:
-                cur.close()
-
     return render_template('update/uWarehouse.html')
 
-# @update.route('/warehouse/lower', methods = ['PUT', 'POST'])
-# def uWarehouseLower():
+@update.route('/warehouse/lower', methods = ['GET', 'POST'])
+def uWarehouseLower():
+    percentage = request.form.get('discount_percentage')
     
-#     percentage = request.json['percentage']
-#     cur = conn.cursor()
+    cur = conn.cursor()
 
-#     try:
-#         insertQuery = "call discount(%s);"
-#         record = (percentage,)
-#         cur.execute(insertQuery, record)
-#         conn.commit()
-#         print("Flower price updated")
-#     except psycopg2.DatabaseError as e:
-#         print(f'Error {e}')
-#     finally:
-#         cur.close()
-#         conn.close()
+    try:
+        insertQuery = "call discount(%s);"
+        record = (percentage,)
+        cur.execute(insertQuery, record)
+        conn.commit()
+        print("Flower price updated")
+        flash("Flower price updated", category = 'success')
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+        flash("The price reduction was not successful", category = 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for('select.sWarehouse'))
+
+@update.route('/warehouse/increase', methods = ['GET', 'POST'])
+def uWarehouseIncrease():
+    percentage = request.form.get('price_increase_percentage')
     
-#     return redirect(url_for('select.sFarmland'))
+    cur = conn.cursor()
 
-@update.route('/lodging', methods = ['GET', 'PUT'])
+    try:
+        insertQuery = "call priceIncrease(%s);"
+        record = (percentage,)
+        cur.execute(insertQuery, record)
+        conn.commit()
+        print("Flower price updated")
+        flash("Flower price updated", category = 'success')
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+        flash("The price increase was not successful", category = 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for('select.sWarehouse'))
+
+@update.route('/lodging', methods = ['GET', 'POST'])
 def uLodging():
-    if request.method == 'PUT':
-        address = request.json['address']
-        apartments = request.json['apartments']
+    if request.method == 'POST':
+        address = request.form.get('address')
+        apartments = request.form.get('apartments')
+
         cur = conn.cursor()
             
         try:
+            insertQuery = "select apartments from lodging where address = %s;"
+            cur.execute(insertQuery, (address,))
+            result = cur.fetchone()
+
+            if result == None:
+                    flash("Enter the correct address", category = 'error')
+                    return render_template('update/uLodging.html')
+
             insertQuery = "update lodging set apartments = %s where address = %s;"
             record = (apartments, address)
             cur.execute(insertQuery, record)
@@ -156,14 +181,22 @@ def uLodging():
     
     return render_template('update/uLodging.html')
 
-@update.route('/farmland', methods = ['GET', 'PUT'])
+@update.route('/farmland', methods = ['GET', 'POST'])
 def uFarmland():
-    if request.method == 'PUT':
-        address = request.json['address']
-        area = request.json['area']
+    if request.method == 'POST':
+        address = request.form.get('address')
+        area = request.form.get('area')
         cur = conn.cursor()
             
         try:
+            insertQuery = "select area from farmland where address = %s;"
+            cur.execute(insertQuery, (address,))
+            result = cur.fetchone()
+
+            if result == None:
+                    flash("Enter the correct address", category = 'error')
+                    return render_template('update/uFarmland.html')
+
             insertQuery = "update farmland set area = (%s) where address = %s;"
             record = (area, address)
             cur.execute(insertQuery, record)
@@ -176,36 +209,38 @@ def uFarmland():
         finally:
             cur.close()
 
-    return render_template('update/uLodging.html')
+    return render_template('update/uFarmland.html')
 
-@update.route('/client', methods = ['GET', 'PUT'])
+@update.route('/client', methods = ['GET', 'POST'])
 def uClient():
-    if request.method == 'PUT':
+    if request.method == 'POST':
+        pesel = request.form.get('pesel')
+        name = request.form.get('name')
+        surname = request.form.get('surname')
+        company = request.form.get('company')
 
-        pesel = request.json['pesel']
-        name = request.json['name']
-        surname = request.json['surname']
-        company = request.json['company']
         cur = conn.cursor()
         
-        try:
-            record = (name, surname, company, pesel)
-            
-            indices = [i for i, x in enumerate(record) if x == '']
+        record = (name, surname, company, pesel)
+        indices = [i for i, x in enumerate(record) if x == '']
 
+        try:
             if indices:
                 insertQuery = "select name, surname, company from client where pesel = %s;"
                 cur.execute(insertQuery, (pesel,))
                 result = cur.fetchone()
-                
+
+                if result == None:
+                    flash("Enter the correct pesel", category = 'error')
+                    return render_template('update/uClient.html')
+
                 record = list(record)
-                print(record)
-                
+            
                 for i in indices:
                     record[i] = result[i]
 
                 record = tuple(record)
-
+            
                 insertQuery = "update client set (name, surname, company) = (%s, %s, %s) where pesel = %s;"
                 cur.execute(insertQuery, record)
                 conn.commit()
@@ -214,36 +249,38 @@ def uClient():
                 record = (name, surname, company, pesel)
                 cur.execute(insertQuery, record)
                 conn.commit()
-
-            print("Client modified")
-            flash("Client modified", category = 'success')
+                print("Client modified")
+                flash("Client modified", category = 'success')
         except psycopg2.DatabaseError as e:
-            print(f'Error {e}')
-            flash("The operation could not be performed successfully", category = 'error')
+                print(f'Error {e}')
+                flash("The operation could not be performed successfully", category = 'error')
         finally:
             cur.close()
 
     return render_template('update/uClient.html')
 
-@update.route('/equipment', methods = ['GET', 'PUT'])
+@update.route('/equipment', methods = ['GET', 'POST'])
 def uEquipment():
-    if request.method == 'PUT':
+    if request.method == 'POST':
 
-        id = request.json['id']
-        name = request.json['name']
-        model = request.json['model']
-        warrantyValidity = request.json['warranty_validity']
+        id = request.form.get('id')
+        name = request.form.get('name')
+        model = request.form.get('model')
+        warrantyValidity = request.form.get('warranty_validity')
         cur = conn.cursor()
 
         try:
             record = (name, model, warrantyValidity, id)
-
             indices = [i for i, x in enumerate(record) if x == '']
             
             if indices:
                 insertQuery = "select name, model, warranty_validity from equipment where id = %s;"
                 cur.execute(insertQuery, (id,))
                 result = cur.fetchone()
+
+                if result == None:
+                    flash("Enter the correct id", category = 'error')
+                    return render_template('update/uEquipment.html')
                 
                 record = list(record)
                 
@@ -260,9 +297,8 @@ def uEquipment():
                 record = (name, model, warrantyValidity, id)
                 cur.execute(insertQuery, record)
                 conn.commit()
-
-            print("Equipment modified")
-            flash("Equipment modified", category = 'success')
+                print("Equipment modified")
+                flash("Equipment modified", category = 'success')
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')
@@ -271,19 +307,19 @@ def uEquipment():
 
     return render_template('update/uEquipment.html')
 
-@update.route('/sowing', methods = ['GET', 'PUT'])
+@update.route('/sowing', methods = ['GET', 'POST'])
 def uSowing():
-    if request.method == 'PUT':
-        recent_activity = request.json['recent_activity']
-        seed_quantity = request.json['seed_quantity']
-        equipment_id = request.json['equipment_id']
-        farmland_address = request.json['farmland_address']
-        person_pesel = request.json['person_pesel']
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        seed_quantity = request.form.get('seed_quantity')
+        equipment_id = request.form.get('equipment_id')
+        farmland_address = request.form.get('farmland_address')
+        person_pesel = request.form.get('person_pesel')
+        
         cur = conn.cursor()
             
         try:
             record = (seed_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
-            
             indices = [i for i, x in enumerate(record) if x == '']
 
             if indices:
@@ -317,19 +353,19 @@ def uSowing():
 
     return render_template('update/uSowing.html')
 
-@update.route('/harvest', methods = ['GET', 'PUT'])
+@update.route('/harvest', methods = ['GET', 'POST'])
 def uHarvest():
-    if request.method == 'PUT':
-        recent_activity = request.json['recent_activity']
-        flower_quantity = request.json['flower_quantity']
-        equipment_id = request.json['equipment_id']
-        farmland_address = request.json['farmland_address']
-        person_pesel = request.json['person_pesel']
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        flower_quantity = request.form.get('flower_quantity')
+        equipment_id = request.form.get('equipment_id')
+        farmland_address = request.form.get('farmland_address')
+        person_pesel = request.form.get('person_pesel')
+
         cur = conn.cursor()
             
         try:
             record = (flower_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
-            
             indices = [i for i, x in enumerate(record) if x == '']
 
             if indices:
@@ -363,18 +399,18 @@ def uHarvest():
 
     return render_template('update/uHarvest.html')
 
-@update.route('/weeding', methods = ['GET', 'PUT'])
+@update.route('/weeding', methods = ['GET', 'POST'])
 def uWeeding():
-    if request.method == 'PUT':
-        recent_activity = request.json['recent_activity']
-        equipment_id = request.json['equipment_id']
-        person_pesel = request.json['person_pesel']
-        farmland_address = request.json['farmland_address']
+    if request.method == 'POST':
+        recent_activity = request.form.get('recent_activity')
+        equipment_id = request.form.get('equipment_id')
+        farmland_address = request.form.get('farmland_address')
+        person_pesel = request.form.get('person_pesel')
+
         cur = conn.cursor()
             
         try:
             record = (equipment_id, person_pesel, farmland_address, recent_activity)
-            
             indices = [i for i, x in enumerate(record) if x == '']
 
             if indices:
@@ -408,19 +444,20 @@ def uWeeding():
 
     return render_template('update/uWeeding.html')
 
-@update.route('/transaction', methods = ['GET', 'PUT'])
+@update.route('/transaction', methods = ['GET', 'POST'])
 def uTransaction():
-    if request.method == 'PUT':
-        id = request.json['id']
-        flower_quantity = request.json['flower_quantity']
-        seed_quantity = request.json['seed_quantity']
-        payment = request.json['payment']
-        date_of_transaction = request.json['date_of_transaction']
-        client_pesel = request.json['client_pesel']
-        warehouse_address = request.json['warehouse_address']
-        person_pesel = request.json['person_pesel']
+    if request.method == 'POST':
+        id = request.form.get('id')
+        flower_quantity = request.form.get('flower_quantity')
+        seed_quantity = request.form.get('seed_quantity')
+        person_pesel = request.form.get('person_pesel')
+        payment = request.form.get('payment')
+        date_of_transaction = request.form.get('date_of_transaction')
+        client_pesel = request.form.get('client_pesel')
+        warehouse_address = request.form.get('warehouse_address')
             
         cur = conn.cursor()
+
         try:
             record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
             
@@ -435,7 +472,6 @@ def uTransaction():
                 record = list(record)
                 
                 for i in indices:
-                    print(result)
                     record[i] = result[i]
 
                 record = tuple(record)

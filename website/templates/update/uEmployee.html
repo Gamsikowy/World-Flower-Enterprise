@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="insertForm">
-    <form class="form-horizontal">
+    <form class="form-horizontal" method="POST">
       <h3 align="center">Update</h3>
       <div class="form-group">
         <label class="control-label col-sm-2" for="name">Name:</label>
@@ -18,7 +18,7 @@
         <div class="form-group">
           <label class="control-label col-sm-2" for="phone">Phone:</label>
           <div class="col-sm-3">
-            <input type="tel" class="form-control" id="phone" name="phone" maxlength="9" placeholder="Enter phone number">
+            <input type="tel" class="form-control" id="phone" name="phone" minlength="9" maxlength="9" placeholder="Enter phone number">
           </div>
         </div>
         <div class="form-group">
@@ -30,7 +30,7 @@
         <div class="form-group">
           <label class="control-label col-sm-2" for="salary">Salary:</label>
           <div class="col-sm-3">
-            <input type="number" class="form-control" id="salary" step="0.01" name="salary" placeholder="Enter salary">
+            <input type="number" class="form-control" id="salary" step="0.01" name="salary" min="0" placeholder="Enter salary">
           </div>
         </div>
         <div class="form-group col-sm-2">
@@ -60,7 +60,4 @@
         </div>
     </form>
 </div>
-{% endblock %}
-{% block js %}
-<script type="text/javascript" src="{{url_for('static', filename='uEmployee.js')}}"></script>
 {% endblock %}
