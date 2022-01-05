@@ -21,16 +21,19 @@ def uEmployee():
 
         cur = conn.cursor()
 
+        record = (name, surname, phone, birth, salary, role, lodgingAddress, pesel)
+        indices = [i for i, x in enumerate(record) if x == '' or x == None]
+
         try:
-            record = (name, surname, phone, birth, salary, role, lodgingAddress, pesel)
+            insertQuery = 'select name, surname, phone_number, birth_date, salary, role, lodging_address from person where pesel = %s;'
+            cur.execute(insertQuery, (pesel,))
+            result = cur.fetchone()
+
+            if result == None:
+                    flash("Enter the correct pesel", category = 'error')
+                    return render_template('update/uEmployee.html')
            
-            indices = [i for i, x in enumerate(record) if x == '' or x == None]
-           
-            if indices:
-                insertQuery = 'select name, surname, phone_number, birth_date, salary, role, lodging_address from person where pesel = %s;'
-                cur.execute(insertQuery, (pesel,))
-                result = cur.fetchone()
-                
+            if indices:              
                 record = list(record)
                 
                 for i in indices:
@@ -72,15 +75,15 @@ def uWarehouse():
         indices = [i for i, x in enumerate(record) if x == '']
 
         try:
+            insertQuery = "select flower_quantity, seed_quantity, flower_price, seed_price from warehouse where address = %s;"
+            cur.execute(insertQuery, (address,))
+            result = cur.fetchone()
+
+            if result == None:
+                    flash("Enter the correct address", category = 'error')
+                    return render_template('update/uWarehouse.html')
+
             if indices:
-                insertQuery = "select flower_quantity, seed_quantity, flower_price, seed_price from warehouse where address = %s;"
-                cur.execute(insertQuery, (address,))
-                result = cur.fetchone()
-
-                if result == None:
-                        flash("Enter the correct address", category = 'error')
-                        return render_template('update/uWarehouse.html')
-
                 record = list(record)
             
                 for i in indices:
@@ -186,6 +189,7 @@ def uFarmland():
     if request.method == 'POST':
         address = request.form.get('address')
         area = request.form.get('area')
+
         cur = conn.cursor()
             
         try:
@@ -225,15 +229,15 @@ def uClient():
         indices = [i for i, x in enumerate(record) if x == '']
 
         try:
+            insertQuery = "select name, surname, company from client where pesel = %s;"
+            cur.execute(insertQuery, (pesel,))
+            result = cur.fetchone()
+
+            if result == None:
+                flash("Enter the correct pesel", category = 'error')
+                return render_template('update/uClient.html')
+
             if indices:
-                insertQuery = "select name, surname, company from client where pesel = %s;"
-                cur.execute(insertQuery, (pesel,))
-                result = cur.fetchone()
-
-                if result == None:
-                    flash("Enter the correct pesel", category = 'error')
-                    return render_template('update/uClient.html')
-
                 record = list(record)
             
                 for i in indices:
@@ -268,21 +272,22 @@ def uEquipment():
         name = request.form.get('name')
         model = request.form.get('model')
         warrantyValidity = request.form.get('warranty_validity')
+
         cur = conn.cursor()
 
-        try:
-            record = (name, model, warrantyValidity, id)
-            indices = [i for i, x in enumerate(record) if x == '']
-            
-            if indices:
-                insertQuery = "select name, model, warranty_validity from equipment where id = %s;"
-                cur.execute(insertQuery, (id,))
-                result = cur.fetchone()
+        record = (name, model, warrantyValidity, id)
+        indices = [i for i, x in enumerate(record) if x == '']
 
-                if result == None:
-                    flash("Enter the correct id", category = 'error')
-                    return render_template('update/uEquipment.html')
-                
+        try:
+            insertQuery = "select name, model, warranty_validity from equipment where id = %s;"
+            cur.execute(insertQuery, (id,))
+            result = cur.fetchone()
+
+            if result == None:
+                flash("Enter the correct id", category = 'error')
+                return render_template('update/uEquipment.html')
+
+            if indices:                
                 record = list(record)
                 
                 for i in indices:
@@ -320,20 +325,20 @@ def uSowing():
         person_pesel = request.form.get('person_pesel')
         
         cur = conn.cursor()
+
+        record = (seed_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
+        indices = [i for i, x in enumerate(record) if x == '']
             
         try:
-            record = (seed_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
-            indices = [i for i, x in enumerate(record) if x == '']
+            insertQuery = "select seed_quantity, equipment_id, farmland_address, person_pesel from sowing where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            result = cur.fetchone()
+            
+            if result == None:
+                flash("Enter the correct date", category = 'error')
+                return render_template('update/uSowing.html')
 
             if indices:
-                insertQuery = "select seed_quantity, equipment_id, farmland_address, person_pesel from sowing where recent_activity = %s;"
-                cur.execute(insertQuery, (recent_activity,))
-                result = cur.fetchone()
-                
-                if result == None:
-                    flash("Enter the correct date", category = 'error')
-                    return render_template('update/uSowing.html')
-
                 record = list(record)
                 
                 for i in indices:
@@ -370,20 +375,20 @@ def uHarvest():
         person_pesel = request.form.get('person_pesel')
 
         cur = conn.cursor()
+
+        record = (flower_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
+        indices = [i for i, x in enumerate(record) if x == '']
             
         try:
-            record = (flower_quantity, equipment_id, farmland_address, person_pesel, recent_activity)
-            indices = [i for i, x in enumerate(record) if x == '']
+            insertQuery = "select flower_quantity, equipment_id, farmland_address, person_pesel from harvest where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            result = cur.fetchone()
+            
+            if result == None:
+                flash("Enter the correct date", category = 'error')
+                return render_template('update/uHarvest.html')
 
             if indices:
-                insertQuery = "select flower_quantity, equipment_id, farmland_address, person_pesel from harvest where recent_activity = %s;"
-                cur.execute(insertQuery, (recent_activity,))
-                result = cur.fetchone()
-                
-                if result == None:
-                    flash("Enter the correct date", category = 'error')
-                    return render_template('update/uHarvest.html')
-
                 record = list(record)
                 
                 for i in indices:
@@ -419,20 +424,20 @@ def uWeeding():
         person_pesel = request.form.get('person_pesel')
 
         cur = conn.cursor()
+
+        record = (equipment_id, person_pesel, farmland_address, recent_activity)
+        indices = [i for i, x in enumerate(record) if x == '']
             
         try:
-            record = (equipment_id, person_pesel, farmland_address, recent_activity)
-            indices = [i for i, x in enumerate(record) if x == '']
+            insertQuery = "select equipment_id, person_pesel, farmland_address from weeding where recent_activity = %s;"
+            cur.execute(insertQuery, (recent_activity,))
+            result = cur.fetchone()
+            
+            if result == None:
+                flash("Enter the correct date", category = 'error')
+                return render_template('update/uWeeding.html')
 
             if indices:
-                insertQuery = "select equipment_id, person_pesel, farmland_address from weeding where recent_activity = %s;"
-                cur.execute(insertQuery, (recent_activity,))
-                result = cur.fetchone()
-                
-                if result == None:
-                    flash("Enter the correct date", category = 'error')
-                    return render_template('update/uWeeding.html')
-
                 record = list(record)
                 
                 for i in indices:
@@ -473,20 +478,19 @@ def uTransaction():
             
         cur = conn.cursor()
 
-        try:
-            record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
-            
-            indices = [i for i, x in enumerate(record) if x == '']
-            
-            if indices:
-                insertQuery = "select flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel from transaction where id = %s;"
-                cur.execute(insertQuery, (id,))
-                result = cur.fetchone()
-                
-                if result == None:
-                    flash("Enter the correct id", category = 'error')
-                    return render_template('update/uTransaction.html')
+        record = (flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel, id)
+        indices = [i for i, x in enumerate(record) if x == '']
 
+        try:
+            insertQuery = "select flower_quantity, seed_quantity, payment, date_of_transaction, client_pesel, warehouse_address, person_pesel from transaction where id = %s;"
+            cur.execute(insertQuery, (id,))
+            result = cur.fetchone()
+            
+            if result == None:
+                flash("Enter the correct id", category = 'error')
+                return render_template('update/uTransaction.html')
+                
+            if indices:
                 record = list(record)
                 
                 for i in indices:
