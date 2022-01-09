@@ -45,7 +45,7 @@ def uEmployee():
                 cur.execute(insertQuery, record)
                 conn.commit()
             else:
-                insertQuery = "update person set (name, surname, phone_number, birth_date, salary, role, lodging_address) = (%s, %s, %s, %s, %s, %s, %s) where id = %s;"
+                insertQuery = "update person set (name, surname, phone_number, birth_date, salary, role, lodging_address) = (%s, %s, %s, %s, %s, %s, %s) where pesel = %s;"
                 record = (name, surname, phone, birth, salary, role, lodgingAddress, pesel)
                 cur.execute(insertQuery, record)
                 conn.commit()
