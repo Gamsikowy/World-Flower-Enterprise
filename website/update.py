@@ -317,7 +317,6 @@ def uEquipment():
 @update.route('/sowing', methods = ['GET', 'POST'])
 def uSowing():
     if request.method == 'POST':
-        print('elo')
         recent_activity = request.form.get('recent_activity')
         seed_quantity = request.form.get('seed_quantity')
         equipment_id = request.form.get('equipment_id')
