@@ -114,12 +114,21 @@ def uWarehouse():
 @update.route('/warehouse/lower', methods = ['GET', 'POST'])
 def uWarehouseLower():
     percentage = request.form.get('discount_percentage')
+    address = request.form.get('discount_address')
     
     cur = conn.cursor()
 
     try:
-        insertQuery = "call discount(%s);"
-        record = (percentage,)
+        insertQuery = "select * from warehouse where address = %s;"
+        cur.execute(insertQuery, (address,))
+        result = cur.fetchone()
+
+        if result == None:
+            flash("Enter the correct address", category = 'error')
+            return redirect(url_for('.uWarehouse'))
+
+        insertQuery = "call discount(%s, %s);"
+        record = (percentage, address)
         cur.execute(insertQuery, record)
         conn.commit()
         print("Flower price updated")
@@ -135,12 +144,21 @@ def uWarehouseLower():
 @update.route('/warehouse/increase', methods = ['GET', 'POST'])
 def uWarehouseIncrease():
     percentage = request.form.get('price_increase_percentage')
+    address = request.form.get('price_increase_address')
     
     cur = conn.cursor()
 
     try:
-        insertQuery = "call priceIncrease(%s);"
-        record = (percentage,)
+        insertQuery = "select * from warehouse where address = %s;"
+        cur.execute(insertQuery, (address,))
+        result = cur.fetchone()
+
+        if result == None:
+            flash("Enter the correct address", category = 'error')
+            return redirect(url_for('.uWarehouse'))
+
+        insertQuery = "call priceIncrease(%s, %s);"
+        record = (percentage, address)
         cur.execute(insertQuery, record)
         conn.commit()
         print("Flower price updated")
@@ -317,7 +335,6 @@ def uEquipment():
 @update.route('/sowing', methods = ['GET', 'POST'])
 def uSowing():
     if request.method == 'POST':
-        print('elo')
         recent_activity = request.form.get('recent_activity')
         seed_quantity = request.form.get('seed_quantity')
         equipment_id = request.form.get('equipment_id')

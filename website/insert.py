@@ -10,16 +10,16 @@ conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
 
 @insert.route('/employee', methods = ['GET', 'POST'])
 def iEmployee():
-    cur = conn.cursor()
-    try:
-        insertQuery = "select freeApartments();"
-        cur.execute(insertQuery)
-        row = cur.fetchone()
-    except psycopg2.DatabaseError as e:
-        print(f'Error {e}')
-        flash("The operation could not be performed successfully", category = 'error')
-    finally:
-        cur.close()
+    # cur = conn.cursor()
+    # try:
+    #     insertQuery = "select freeApartments();"
+    #     cur.execute(insertQuery)
+    #     apartments = cur.fetchone()
+    # except psycopg2.DatabaseError as e:
+    #     print(f'Error {e}')
+    #     flash("The operation could not be performed successfully", category = 'error')
+    # finally:
+    #     cur.close()
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -51,7 +51,15 @@ def iEmployee():
         cur = conn.cursor()
 
         try:
-            insertQuery = "insert into equipment (pesel, name, surname, phone_number, birth_date, salary, role, lodging_address) values (%s, %s, %s, %s, %s, %s, %s, %s);"
+            insertQuery = "select currentFreeApartments(%s);"
+            cur.execute(insertQuery, (lodgingAddress,))
+
+            if cur.fetchone()[0] <= 0:
+                # print("There are no vacancies at this address")
+                # flash("There are no vacancies at this address", category = 'error')
+                raise Exception("There are no vacancies at this address")
+
+            insertQuery = "insert into person (pesel, name, surname, phone_number, birth_date, salary, role, lodging_address) values (%s, %s, %s, %s, %s, %s, %s, %s);"
             record = (pesel, name, surname, phone, birthDate, salary, role, lodgingAddress)
             cur.execute(insertQuery, record)
             conn.commit()
@@ -60,10 +68,24 @@ def iEmployee():
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')
+        except Exception as e:
+            print(f'Error {e}')
+            flash(e, category = 'error')
         finally:
             cur.close()
-        
-    return render_template('insert/iEmployee.html', apartmentsNumber = row[0])
+
+    cur = conn.cursor()
+    try:
+        insertQuery = "select freeApartments();"
+        cur.execute(insertQuery)
+        apartments = cur.fetchone()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+        flash("The operation could not be performed successfully", category = 'error')
+    finally:
+        cur.close()
+    
+    return render_template('insert/iEmployee.html', apartmentsNumber = apartments[0])
 
 @insert.route('/lodging', methods = ['GET', 'POST'])
 def iLodging():
@@ -207,8 +229,8 @@ def iSowing():
             record = (recent_activity, seed_quantity, equipment_id, farmland_address, person_pesel)
             cur.execute(insertQuery, record)
             conn.commit()
-            print("Equipment inserted")
-            flash("Equipment inserted", category = 'success')
+            print("Sowing inserted")
+            flash("Sowing inserted", category = 'success')
         except psycopg2.DatabaseError as e:
             print(f'Error {e}')
             flash("The operation could not be performed successfully", category = 'error')

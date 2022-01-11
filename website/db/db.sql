@@ -162,7 +162,7 @@ ALTER TABLE weeding
     ADD CONSTRAINT weeding_person_fk FOREIGN KEY ( person_pesel )
         REFERENCES person ( pesel );
     
-alter table person add check(role in ('employee', 'accountant'));
+alter table person add check(role in ('worker', 'accountant'));
 
 create sequence tr_seq
 start with 1
@@ -173,24 +173,26 @@ start with 1
 increment by 1;
 
 create or replace procedure discount (
-    reductionPercentage in float)
+    reductionPercentage in float, warehouse_address in varchar)
 language plpgsql    
 as $$
 begin
  update warehouse
- set flower_price = flower_price * (100 - reductionPercentage) / 100;
+ set flower_price = flower_price * (100 - reductionPercentage) / 100
+ where address = warehouse_address;
 end$$;
--- call discount(10);
+-- call discount(10, 'Meerweg 44, Breezand');
 
 create or replace procedure priceIncrease (
-    increasePercentage in float)
+    increasePercentage in float, warehouse_address in varchar)
 language plpgsql    
 as $$
 begin
  update warehouse
- set flower_price = flower_price * (100 + increasePercentage) / 100;
+ set flower_price = flower_price * (100 + increasePercentage) / 100
+ where address = warehouse_address;
 end$$;
--- call priceIncrease(10);
+-- call priceIncrease(10, 'Meerweg 44, Breezand');
 
 create or replace function freeApartments ()
 returns integer as $counter$
@@ -208,6 +210,28 @@ begin
 end;
 $counter$ language plpgsql;
 -- select freeApartments();
+
+create or replace function currentFreeApartments (varchar)
+returns integer as $counter$
+declare
+	counter integer;
+begin
+	select (
+		select apartments
+		from lodging
+		where address = $1
+	) - (
+		select count(*)
+		from person
+		where lodging_address = $1
+	)
+	into counter
+	from person p join lodging l
+	on p.lodging_address = l.address;
+   return counter;
+end;
+$counter$ language plpgsql;
+-- select currentFreeApartments('Laan 11, Schagen');
 
 --ten trigger nie działa
 /*create or replace function nonZeroWage ()
