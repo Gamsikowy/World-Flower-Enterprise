@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from .config import DB_HOST, DB_NAME, DB_USER, DB_PASS
 import psycopg2
 
@@ -19,6 +19,23 @@ def sEmployee():
         print(f'Error {e}')
     finally:
         cur.close()
+    return render_template('select/sEmployee.html', rows = rows)
+
+@select.route('/employee/search', methods = ['GET', 'POST'])
+def sEmployeeSearch():
+    pattern = request.form.get('pattern')
+    
+    cur = conn.cursor()
+
+    try:
+        insertQuery = "select * from person where name like '%" + pattern + "%' or surname like '%" + pattern + "%';"
+        cur.execute(insertQuery)
+        rows = cur.fetchall()
+    except psycopg2.DatabaseError as e:
+        print(f'Error {e}')
+    finally:
+        cur.close()
+
     return render_template('select/sEmployee.html', rows = rows)
 
 @select.route('/clients')
@@ -65,8 +82,8 @@ def sSowing():
 
 @select.route('/harvest')
 def sHarvest():
-
     cur = conn.cursor()
+
     try:
         insertQuery = "select * from harvest;"
         cur.execute(insertQuery)
@@ -79,8 +96,8 @@ def sHarvest():
 
 @select.route('/weeding')
 def sWeeding():
-
     cur = conn.cursor()
+
     try:
         insertQuery = "select * from weeding;"
         cur.execute(insertQuery)
@@ -93,8 +110,8 @@ def sWeeding():
 
 @select.route('/transaction')
 def sTransactions():
-
     cur = conn.cursor()
+
     try:
         insertQuery = "select * from transaction;"
         cur.execute(insertQuery)
@@ -107,8 +124,8 @@ def sTransactions():
 
 @select.route('/lodging')
 def sLodging():
-
     cur = conn.cursor()
+
     try:
         insertQuery = "select * from lodging;"
         cur.execute(insertQuery)
@@ -121,8 +138,8 @@ def sLodging():
 
 @select.route('/farmland')
 def sFarmland():
-    
     cur = conn.cursor()
+
     try:
         insertQuery = "select * from farmland;"
         cur.execute(insertQuery)
@@ -136,7 +153,6 @@ def sFarmland():
 
 @select.route('/warehouse')
 def sWarehouse():
-
     cur = conn.cursor()
     try:
         insertQuery = "select * from warehouse;"
