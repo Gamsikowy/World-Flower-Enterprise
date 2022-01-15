@@ -232,22 +232,3 @@ begin
 end;
 $counter$ language plpgsql;
 -- select currentFreeApartments('Laan 11, Schagen');
-
---ten trigger nie działa
-/*create or replace function nonZeroWage ()
- returns trigger as $$
-
- begin
-	if old.salary is NULL or old.salary = 0 then
-         new.salary = 100;
-	end if;
-	return new;
- end;
- 
-$$ LANGUAGE plpgsql;
-
-create or replace trigger nonZeroWageTrigger
- before insert
- on person
- for each row
- execute procedure nonZeroWage();*/
