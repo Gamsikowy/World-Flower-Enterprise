@@ -10,17 +10,6 @@ conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER,
 
 @insert.route('/employee', methods = ['GET', 'POST'])
 def iEmployee():
-    # cur = conn.cursor()
-    # try:
-    #     insertQuery = "select freeApartments();"
-    #     cur.execute(insertQuery)
-    #     apartments = cur.fetchone()
-    # except psycopg2.DatabaseError as e:
-    #     print(f'Error {e}')
-    #     flash("The operation could not be performed successfully", category = 'error')
-    # finally:
-    #     cur.close()
-
     if request.method == 'POST':
         name = request.form.get('name')
         surname = request.form.get('surname')
