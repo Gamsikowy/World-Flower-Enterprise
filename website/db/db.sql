@@ -231,4 +231,8 @@ begin
    return counter;
 end;
 $counter$ language plpgsql;
+<<<<<<< HEAD
 -- select currentFreeApartments('Laan 11, Schagen');
+=======
+-- select currentFreeApartments('Laan 11, Schagen');
+>>>>>>> 382c61826fb99a7c6e45958c1d3415b2ccaae44d
