@@ -1,9 +1,9 @@
 # World-Flower-Enterprise
 ## Table of contents
-* [Goal of the projet](#goal-of-the-projet)
+* [Goal of the project](#goal-of-the-project)
 * [Technologies](#technologies)
 * [Launching the application](#launching-the-application)
-## Goal of the projet:
+## Goal of the project:
 Application created as a project for a university that manages a database of a company dealing in the cultivation and sale of flowers and seeds.
 ## Technologies:
 * Python 3.9.1<br>
