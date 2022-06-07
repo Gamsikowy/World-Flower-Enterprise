@@ -4,7 +4,7 @@
 * [Technologies](#technologies)
 * [Launching the application](#launching-the-application)
 ## Goal of the project:
-Application created as a project for a university that manages a database of a company dealing in the cultivation and sale of flowers and seeds.
+CRUD application created as a project for a university that manages a database of a company dealing in the cultivation and sale of flowers and seeds.
 ## Technologies:
 * Python 3.9.1<br>
 * postgreSQL 14.0<br>
